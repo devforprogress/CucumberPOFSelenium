@@ -1,22 +1,29 @@
 package PageObject;
 
+import StepDefinitions.BaseClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 
-public class AddCustomerPage {
+public class AddCustomerPage extends BaseClass {
 
     WebDriver ldriver;
 
     public AddCustomerPage(WebDriver rdriver){
         ldriver = rdriver;
         PageFactory.initElements(rdriver,this);
+        wait10 = new WebDriverWait(rdriver, Duration.ofSeconds(10));
+
+
     }
 
     @FindBy(xpath = "//a[@href='/Admin/Customer/Create']")
@@ -62,11 +69,16 @@ public class AddCustomerPage {
     @FindBy(xpath = "// button[@id='search-customers']")
     WebElement searchBtn;
 
-    @FindBy(xpath = "//table[@id=\"customers-grid\"]//tbody/tr")
+//    @FindBy(xpath = "//table[@id=\"customers-grid\"]//tbody/tr")
+    @FindBy(xpath = "//table[@class ='table table-bordered table-hover table-striped dataTable no-footer' and @id = 'customers-grid']//tbody/tr")
     List<WebElement> tableRows;
 
     @FindBy(xpath = "//table[@id=\"customers-grid\"]//tbody/tr[1]/td")
+
     List<WebElement> tableColumns;
+
+    @FindBy(xpath = "//div[@id='customers-grid_info' and @role='status']")
+    WebElement numberOfPages;
 
 //    @FindBy(xpath = "//select[@id=\"SelectedCustomerRoleIds\"]")
 //    WebElement selectRole;
@@ -179,19 +191,32 @@ public boolean checkEmailInSearchResults(String email){
     int totalRows = tableRows.size();
     int totalCols = tableColumns.size();
     for (int i=1; i<= totalRows;i++){
-        WebElement emailActual = ldriver.findElement(By.xpath("//table[@id=\"customers-grid\"]//tbody/tr["+i+"]/td"));
+        WebElement emailActual = ldriver.findElement(By.xpath("//table[@class ='table table-bordered table-hover table-striped dataTable no-footer' and @id = 'customers-grid']/tbody/tr["+i+"]/td[2]"));
+
         String emailActualText = emailActual.getText();
-        System.out.println(emailActualText);
+        System.out.println("77777777777777 -"+emailActualText);
         if(emailActualText.equalsIgnoreCase(email)){
 
             found = true;
             break;
+
         }
 
     }
 return found;
 
 }
+
+ public String numberofPagesInSearchResults(){
+
+     System.out.println("Waiting for the Element");
+
+     wait10.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='customers-grid_info' and @role='status']")));
+
+        String pages =numberOfPages.getText();
+        return pages;
+ }
+
 
 }
 

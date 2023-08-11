@@ -3,51 +3,78 @@ package StepDefinitions;
 import PageObject.AddCustomerPage;
 import PageObject.DashBoardPage;
 import PageObject.LogInPage;
+import io.cucumber.java.*;
 import io.cucumber.java.en.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
 public class StepDefinitions extends BaseClass {
 
+@Before("@NonReg")
+public void setup(){
+    driver = new ChromeDriver();
+    driver.manage().window().maximize();
+    System.out.println("Non -reg Setup method Executed");
+    log = LogManager.getLogger("StepDefinitions");
+}
 
+    @Before("@Sanity")
+    public void setup1(){
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        System.out.println("Sanity Setup method Executed");
+        log = LogManager.getLogger("StepDefinitions");
+    }
 
 
 
     @Given("User  Launch Crome browser")
     public void user_launch_crome_browser() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
+
         logInPage = new LogInPage(driver);
         dashBoardPage = new DashBoardPage(driver);
         addCustomerPage =new AddCustomerPage(driver);
+
 
     }
     @When("User Navigate to URL {string}")
     public void user_navigate_to_url(String string) {
 
         driver.get(string);
+        log.info("Navigating to URL");
 
     }
     @When("User enters email as {string} and password as {string}")
     public void user_enters_email_as_and_password_as(String string, String string2) {
         logInPage.enterEmail(string);
         logInPage.enterPassword(string2);
+        log.info("Email Password entered");
 
     }
     @When("Click Login")
     public void click_login() {
 logInPage.clickLoginBtn();
+log.info("Log in is in progress");
     }
     @Then("Page title Should be {string}")
     public void page_title_should_be(String expectedTitle) {
 
         String actualTitle = driver.getTitle();
         Assert.assertEquals(actualTitle,expectedTitle);
+        log.info("Page title is "+actualTitle);
 
 
     }
@@ -95,9 +122,11 @@ dashBoardPage.expandCustomerMenu();
         if (titleOfPage.equals(expectedPageTitle)){
 
             Assert.assertTrue(true);
+            log.info("Customer created");
         }
         else{
             Assert.assertTrue(false);
+            log.warn("This is not right message seems user is not created.");
         }
 
     }
@@ -115,10 +144,10 @@ dashBoardPage.expandCustomerMenu();
 ////        addCustomerPage.setCustomerRoleList("Guests");
 //    }
 
-    @When("User enters Customers information")
-        public void user_enters_customers_information() {
-        String thiscopyOfEmailID = readFileContent(filePath);
-        addCustomerPage.enterEmailId("CVC1");
+
+    @When("User enters Customers information_new")
+    public void user_enters_customers_information_new() {
+        addCustomerPage.enterEmailId(generateRandomEmailID());
         addCustomerPage.enterPassword("1xyz");
         addCustomerPage.enterFirstName("Abc12");
         addCustomerPage.enterLastName("Xyz12");
@@ -126,7 +155,6 @@ dashBoardPage.expandCustomerMenu();
         addCustomerPage.enterDOB("03/07/1999");
         addCustomerPage.enterCompanyName("XY1ZDSA2");
         addCustomerPage.isTaxExempt("Yes");
-
     }
     @When("Click on Save button")
     public void click_on_save_button() {
@@ -151,23 +179,21 @@ dashBoardPage.expandCustomerMenu();
     public void user_enter_email_id_as(String string) {
 
 
-        addCustomerPage.enterEmailToSearch(copyOfEmailID);
+        addCustomerPage.enterEmailToSearch("victoria_victoria@nopCommerce.com");
     }
     @When("User hit on Search button")
     public void user_hit_on_search_button() {
         addCustomerPage.hitSearchBtn();
-//        try {
-//           Thread.sleep(Duration.ofMillis(6000));
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+
 
     }
     @Then("User Email should be listed in the table")
     public void user_email_should_be_listed_in_the_table() {
-        String searchThis = readFileContent(filePath);
-        boolean isEmailFound = addCustomerPage.checkEmailInSearchResults(searchThis);
 
+       String numberOFPages = addCustomerPage.numberofPagesInSearchResults();
+
+        boolean isEmailFound = addCustomerPage.checkEmailInSearchResults("victoria_victoria@nopCommerce.com");
+        System.out.println("000000000 the isEmailFound value is "+ isEmailFound);
         if (isEmailFound == true){
             Assert.assertTrue(true);
         }
@@ -183,10 +209,60 @@ dashBoardPage.expandCustomerMenu();
     @Then("Close browser")
     public void close_browser() {
         driver.close();
-        driver.quit();
+//        driver.quit();
     }
 
+    @BeforeStep(order = 1)
 
+    public void beforeStepMethod(){
+
+        System.out.println("Order 1---This is Before step =====================");
+    }
+
+    @BeforeStep(order = 0)
+
+    public void beforeStepMethod1(){
+
+        System.out.println("Order 0---This is Before step =====================");
+    }
+
+    @AfterStep(order = 1)
+    public void afterStepMethod(Scenario scenario){
+
+        System.out.println("Order 1--This is After step =====================");
+        if (scenario.isFailed() == true){
+            //WebDriver is converted to Take Screenshot object
+            String filePath = "D:\\Cucumber\\Proj1\\PageFactoryModel\\target\\ScreenShots\\test.png";
+            TakesScreenshot screenShot =((TakesScreenshot) driver);
+
+            //Create Image file
+            File ScrnShotFile = screenShot.getScreenshotAs(OutputType.FILE);
+
+            File destinationFile = new File(filePath);
+
+            try {
+                FileUtils.copyFile(ScrnShotFile,destinationFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }
+    }
+
+    @AfterStep(order = 2)
+    public void afterStepMethod1(){
+
+        System.out.println("Order 2--This is After step =====================");
+        log.info("A step was executed....");
+    }
+
+    @After
+    public void teardown(){
+
+    driver.quit();
+        System.out.println("Teardown method Executed");
+    }
 
 
 }

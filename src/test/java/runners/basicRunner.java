@@ -10,10 +10,11 @@ import org.junit.runner.RunWith;
 //@RunWith(Cucumber.class)
 @CucumberOptions(
 
-        features = "src/test/Features/newCustomer.feature",
+        features = "src/test/Features",
         glue = "StepDefinitions",
         monochrome = true,
         dryRun = false,
+        tags = "@NonReg",
         plugin = {"pretty","html:target/Reports/Report.html"}
 
 

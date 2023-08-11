@@ -4,8 +4,10 @@ import PageObject.AddCustomerPage;
 import PageObject.DashBoardPage;
 import PageObject.LogInPage;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.apache.commons.text.RandomStringGenerator;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -94,7 +96,9 @@ public class BaseClass {
     public String newEmailID;
 
     public String copyOfEmailID;
+    public WebDriverWait wait10;
 
+    public static Logger log;
 
 
 

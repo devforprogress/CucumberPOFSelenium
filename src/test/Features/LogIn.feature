@@ -8,7 +8,7 @@ Feature: LogIn Test
 #    When User clicks on LogOut Link
 #    Then Page title should be "Your store. Login"
 #    And Close browser
-
+@NonReg
   Scenario Outline: Successful login with Valid Credential
     Given User  Launch Crome browser
     When User Navigate to URL "https://admin-demo.nopcommerce.com/login"

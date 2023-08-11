@@ -6,18 +6,18 @@ Feature: Customer Management
     And Click Login
     Then Page title Should be "Dashboard / nopCommerce administration"
 
-
+@Sanity
   Scenario: Add new Customer
     Then User clicks on Customer Menu
     And User click on Customers menu item
     And user click on Add New Button
     Then User can view Add new Customer page
-    When User enters Customers information
+    When User enters Customers information_new
     And Click on Save button
     Then User can view confirmation message "The new customer has been added successfully"
     Then Close browser
-
-  Scenario: Search existing Customer
+@NonReg
+  Scenario: Search existing Customers
 
     Then User clicks on Customer Menu
     And User click on Customers menu item
