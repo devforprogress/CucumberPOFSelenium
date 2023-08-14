@@ -5,7 +5,7 @@ package runners;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
-import org.junit.runner.RunWith;
+//import org.junit.runner.RunWith;
 
 //@RunWith(Cucumber.class)
 @CucumberOptions(
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
         monochrome = true,
         dryRun = false,
         tags = "@NonReg",
-        plugin = {"pretty","html:target/Reports/Report.html"}
+        plugin = {"summary","pretty","html:target/Reports/Report.html","com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 
 
 )

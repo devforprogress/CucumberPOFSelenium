@@ -8,12 +8,13 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.apache.commons.text.RandomStringGenerator;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import Utilities.readConfig;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Properties;
 
 public class BaseClass {
 
@@ -22,6 +23,9 @@ public class BaseClass {
     public DashBoardPage dashBoardPage;
     public AddCustomerPage addCustomerPage;
     public  String filePath = "emailIDList.txt";
+
+    public readConfig readConfig;
+    public String url;
 
 //    public void hardWaitFor(int sec) {
 //

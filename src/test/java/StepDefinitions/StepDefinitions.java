@@ -3,6 +3,7 @@ package StepDefinitions;
 import PageObject.AddCustomerPage;
 import PageObject.DashBoardPage;
 import PageObject.LogInPage;
+import Utilities.readConfig;
 import io.cucumber.java.*;
 import io.cucumber.java.en.*;
 import org.apache.commons.io.FileUtils;
@@ -11,32 +12,74 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Properties;
 
 public class StepDefinitions extends BaseClass {
 
 @Before("@NonReg")
 public void setup(){
-    driver = new ChromeDriver();
+    readConfig = new readConfig();
+    String browserName = readConfig.getBrowser();
+
+    switch (browserName.toLowerCase()){
+
+        case "chrome":
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
+            break;
+        case "firefox":
+            driver = new FirefoxDriver();
+            break;
+        default:
+            driver = null;
+            break;
+    }
     driver.manage().window().maximize();
     System.out.println("Non -reg Setup method Executed");
     log = LogManager.getLogger("StepDefinitions");
+    url = readConfig.getURL();
 }
 
     @Before("@Sanity")
     public void setup1(){
-        driver = new ChromeDriver();
+       readConfig = new readConfig();
+       String browserName = readConfig.getBrowser();
+       switch (browserName.toLowerCase()){
+
+           case "chrome":
+               WebDriverManager.chromedriver().setup();
+               driver = new ChromeDriver();
+               break;
+           case "firefox":
+               driver = new FirefoxDriver();
+               break;
+           case "edge":
+               driver = new EdgeDriver();
+               break;
+           default:
+               driver = null;
+               break;
+       }
+
+
         driver.manage().window().maximize();
         System.out.println("Sanity Setup method Executed");
         log = LogManager.getLogger("StepDefinitions");
+
+
     }
 
 
@@ -53,7 +96,7 @@ public void setup(){
     @When("User Navigate to URL {string}")
     public void user_navigate_to_url(String string) {
 
-        driver.get(string);
+        driver.get(url);
         log.info("Navigating to URL");
 
     }
@@ -251,7 +294,9 @@ dashBoardPage.expandCustomerMenu();
     }
 
     @AfterStep(order = 2)
-    public void afterStepMethod1(){
+    public void afterStepMethodScreenShot(Scenario scenario){
+    final byte[]screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
+    scenario.attach(screenshot,"image/png",scenario.getName());
 
         System.out.println("Order 2--This is After step =====================");
         log.info("A step was executed....");
